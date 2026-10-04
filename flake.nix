@@ -1,5 +1,5 @@
 {
-  description = "Convert Apple Color Emoji (sbix TTC) to CBDT/CBLC TTF for Linux and Windows";
+  description = "Convert Apple Color Emoji (sbix TTC) to a CBDT/CBLC TTF for Linux";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
@@ -41,19 +41,18 @@
       buildPhase = ''
         runHook preBuild
         python cli.py -c configs/linux.yaml --input "${ttc}" --output ./AppleColorEmoji-Linux.ttf
-        python cli.py -c configs/windows.yaml --input "${ttc}" --output ./AppleColorEmoji-Windows.ttf
         runHook postBuild
       '';
 
       installPhase = ''
         runHook preInstall
         mkdir -p $out/share/fonts/truetype
-        cp ./AppleColorEmoji-Linux.ttf ./AppleColorEmoji-Windows.ttf $out/share/fonts/truetype/
+        cp ./AppleColorEmoji-Linux.ttf $out/share/fonts/truetype/
         runHook postInstall
       '';
 
       meta = with pkgs.lib; {
-        description = "Apple Color Emoji as CBDT/CBLC TTF for Linux and Windows";
+        description = "Apple Color Emoji as a CBDT/CBLC TTF for Linux";
         homepage = "https://github.com/samuelngs/apple-emoji-ttf";
         license = licenses.mit;
         maintainers = [ ];

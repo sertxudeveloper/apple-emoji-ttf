@@ -49,14 +49,14 @@ jobs:
               '.pkg.tar.zst (Arch Linux)',
               'Manual install (copied TTF + fontconfig)',
             ];
-            const windowsMethod = 'Windows (replaced seguiemj.ttf)';
+            const windowsMethod = 'Windows (installed the Apple Color Emoji font)';
 
             let mismatch = '';
             const isWindowsOS = /windows/i.test(os);
             const isLinuxOS = /ubuntu|debian|fedora|rhel|centos|arch|manjaro|linux|mint|pop|endeavour|gentoo|opensuse|suse/i.test(os);
 
             if (isWindowsOS && linuxMethods.includes(method)) {
-              mismatch = `OS is "${osMatch[1].trim()}" but installation method is "${method}" which is a Linux-only method. The Windows installation instructions are in a separate section of the README and require replacing seguiemj.ttf.`;
+              mismatch = `OS is "${osMatch[1].trim()}" but installation method is "${method}" which is a Linux-only method. The Windows installation instructions are in a separate section of the README.`;
             } else if (isLinuxOS && method === windowsMethod) {
               mismatch = `OS is "${osMatch[1].trim()}" but installation method is "${method}" which is Windows-only. They should use the Linux installation instructions from the README.`;
             }

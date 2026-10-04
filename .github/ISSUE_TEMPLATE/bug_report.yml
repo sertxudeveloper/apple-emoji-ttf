@@ -34,7 +34,7 @@ body:
         - .rpm package (Fedora / RHEL)
         - .pkg.tar.zst (Arch Linux)
         - Manual install (copied TTF + fontconfig)
-        - Windows (replaced seguiemj.ttf)
+        - Windows (installed the Apple Color Emoji font)
         - Built from source
     validations:
       required: true

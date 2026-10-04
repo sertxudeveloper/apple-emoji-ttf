@@ -74,24 +74,29 @@ fc-cache -fv
 
 ## Windows
 
-Windows 版本用于替换系统 Emoji 字体：
+Windows 版本是一个普通的字体文件，家族名就是 `Apple Color Emoji`。它不会修改、替换或重命名系统的 `Segoe UI Emoji`。
 
-```text
-C:\Windows\Fonts\seguiemj.ttf
-```
+从 [Releases](https://github.com/samuelngs/apple-emoji-ttf/releases) 下载 `AppleColorEmoji-Windows.ttf`，然后右键点击选择**安装**；如果希望所有用户都能用，就选**为所有用户安装**。也可以直接把文件放进 `%LOCALAPPDATA%\Microsoft\Windows\Fonts`（当前用户）或 `C:\Windows\Fonts`（所有用户）。
 
-请先备份原文件。这个字体不能像普通字体一样双击安装，需要手动替换。
+卸载：打开**设置 → 个性化 → 字体**，选中 `Apple Color Emoji`，点**卸载**。
 
-如果文件被系统占用，可以在管理员命令提示符中执行：
+**应用如何用上它：** Windows 自己会把 Emoji 交给 Segoe UI Emoji 渲染，这个回退位置是字体无法占用的。所以光装上不会改变屏幕上任何 Emoji，必须在具体应用里指定 `Apple Color Emoji`。常见做法：
 
-```cmd
-takeown /f "C:\Windows\Fonts\seguiemj.ttf"
-icacls "C:\Windows\Fonts\seguiemj.ttf" /grant administrators:F
-del "C:\Windows\Fonts\seguiemj.ttf"
-copy "AppleColorEmoji-Windows.ttf" "C:\Windows\Fonts\seguiemj.ttf"
-```
+- **Chrome / Edge 等 Chromium 浏览器** - 用用户样式表或 `@font-face` 规则，把 `src` 指向 `.ttf`，并用 `unicode-range` 限定只覆盖 Emoji，这样其他字符仍然走原来的字体：
 
-替换后重启系统。
+  ```css
+  @font-face {
+    font-family: "Apple Color Emoji";
+    src: url("file:///C:/Windows/Fonts/AppleColorEmoji-Windows.ttf") format("truetype");
+    unicode-range: U+1F000-1FAFF, U+2600-27BF, U+2B00-2BFF, U+FE0F, U+200D, U+1F1E6-1F1FF;
+  }
+  body { font-family: "Apple Color Emoji", system-ui, sans-serif; }
+  ```
+
+- **VS Code 等 Electron 应用** - 把对应设置项写成 `"Apple Color Emoji", <你原来的字体>`，例如 `settings.json` 里的 `"editor.fontFamily"`。
+- **其他应用** - 只要应用提供字体选择器，就直接选 `Apple Color Emoji`。
+
+如果你想让 Emoji 全局替换 Segoe UI Emoji，这个字体做不到。`C:\Windows\Fonts\seguiemj.ttf` 受 Windows 资源保护（WRP）保护，在 Windows 11 上只能离线修改系统镜像才能替换，这会导致 Windows 更新失败，也可能让系统无法启动。
 
 ## Web
 
@@ -185,6 +190,7 @@ python cli.py -c configs/windows.yaml --output output/AppleColorEmoji-Windows.tt
 
 - 部分 Linux 应用里的 Emoji 可能偏小。
 - 部分 Qt 应用可能无法正确显示彩色 Emoji。
+- Windows 会自行把 Emoji 交给 Segoe UI Emoji 渲染，这个回退位置改不了，所以 Windows 版本是作为独立字体安装的，需要在应用里手动指定 `Apple Color Emoji`（见上面的 Windows 部分）。
 
 ## 许可证
 

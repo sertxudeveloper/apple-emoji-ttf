@@ -13,13 +13,14 @@ This project is for educational purposes only. All Apple Color Emoji assets and 
 ## What this builds
 
 - **Linux** - A TTF font and release packages for Debian/Ubuntu, Fedora/RHEL, and Arch-based systems.
-- **Windows** - A TTF font configured to replace Segoe UI Emoji.
+- **Windows** - A TTF font that installs under its own `Apple Color Emoji` family name, alongside Segoe UI Emoji.
 - **Web** - A browser-oriented font build with GSUB shaping, unicode-range splitting, and generated `@font-face` CSS.
 
 ## Known or potential issues
 
 1. **Smaller emoji in some Linux apps** - Certain applications may render emoji at a smaller size than expected. This may be related to how the font is built or how specific toolkits handle color fonts. We're still investigating a fix.
 2. **Qt applications** - Some Qt-based apps may not render the emoji correctly or at all due to how Qt handles color font tables.
+3. **Windows emoji fallback** - Windows resolves emoji to Segoe UI Emoji on its own, and that fallback slot cannot be changed without replacing a protected system font. The Windows build therefore installs as a separate family, so apps have to be pointed at `Apple Color Emoji` explicitly (see the Windows section below).
 
 ## Using the font on Linux
 
@@ -70,20 +71,29 @@ Then clear the font cache: `fc-cache -fv`.
 
 ## Using the font on Windows
 
-Download the Windows build from releases or build with `configs/windows.yaml`. The font is set up to replace Segoe UI Emoji.
+Download `AppleColorEmoji-Windows.ttf` from [Releases](https://github.com/samuelngs/apple-emoji-ttf/releases) or build it yourself with `configs/windows.yaml`. It installs as a normal font named `Apple Color Emoji`. It does not touch, replace, or rename `Segoe UI Emoji`.
 
-**Important:** The font file cannot be installed by double-clicking. You must replace the system font file manually using the steps below.
+To install it, right-click the `.ttf` and choose **Install**, or **Install for all users** if you want it available to every user on the machine. You can also just drop the file into `%LOCALAPPDATA%\Microsoft\Windows\Fonts` (per-user) or `C:\Windows\Fonts` (all users).
 
-Back up the original `C:\Windows\Fonts\seguiemj.ttf` first, then replace it. From an elevated Command Prompt you can try a direct copy; if Windows has the file locked, use this instead:
+To remove it, go to **Settings → Personalization → Fonts**, pick `Apple Color Emoji`, and hit **Uninstall**.
 
-```cmd
-takeown /f "C:\Windows\Fonts\seguiemj.ttf"
-icacls "C:\Windows\Fonts\seguiemj.ttf" /grant administrators:F
-del "C:\Windows\Fonts\seguiemj.ttf"
-copy "AppleColorEmoji-Windows.ttf" "C:\Windows\Fonts\seguiemj.ttf"
-```
+**How apps pick it up:** Windows still sends emoji to Segoe UI Emoji by default, and that fallback is not something a font can claim. So installing alone won't change any emoji on screen. You have to ask for `Apple Color Emoji` where you want it. A few common cases:
 
-Then restart so all apps pick up the new font.
+- **Chrome / Edge / other Chromium browsers** - add a user stylesheet or a `@font-face` rule for the pages you care about. Point `src` at the `.ttf` and restrict it to emoji with `unicode-range`, so it only kicks in for glyphs your other fonts are missing:
+
+  ```css
+  @font-face {
+    font-family: "Apple Color Emoji";
+    src: url("file:///C:/Windows/Fonts/AppleColorEmoji-Windows.ttf") format("truetype");
+    unicode-range: U+1F000-1FAFF, U+2600-27BF, U+2B00-2BFF, U+FE0F, U+200D, U+1F1E6-1F1FF;
+  }
+  body { font-family: "Apple Color Emoji", system-ui, sans-serif; }
+  ```
+
+- **VS Code and other Electron apps** - set the relevant font setting to `"Apple Color Emoji", <your normal font>`, for example `"editor.fontFamily"` in `settings.json`.
+- **Anything else** - pick `Apple Color Emoji` in the app's own font picker wherever it exposes one.
+
+If you need the emoji to replace Segoe UI Emoji system-wide, that's not something this font can do. `C:\Windows\Fonts\seguiemj.ttf` is protected by Windows Resource Protection and can't be replaced on Windows 11 without editing the OS image offline, which breaks Windows Update and is a good way to end up with an unbootable machine.
 
 ## Using the font on the web
 
