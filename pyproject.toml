@@ -1,0 +1,22 @@
+[project]
+name = "apple-emoji-ttf"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Sergio Peris", email = "22801379+sertxudev@users.noreply.github.com" }
+]
+requires-python = ">=3.12.5"
+dependencies = [
+    "fonttools>=4.0.0",
+    "pillow>=10.0.0",
+    "pyyaml>=6.0",
+    "uharfbuzz>=0.40.0",
+]
+
+[project.scripts]
+apple-emoji-ttf = "apple_emoji_ttf:main"
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"
